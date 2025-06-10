@@ -1,0 +1,33 @@
+# Dependencies
+/node_modules
+package-lock.json
+package.json
+yarn.lock
+
+# Rust
+/target
+Cargo.lock
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.local
+
+# Build artifacts
+/dist
+/build
+/test-ledger
+
+# Temporary files
+*.tmp
+*.temp

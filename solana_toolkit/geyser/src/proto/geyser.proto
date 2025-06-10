@@ -1,0 +1,226 @@
+syntax = "proto3";
+
+package geyser;
+
+service Geyser {
+  rpc Subscribe(SubscribeRequest) returns (stream SubscribeUpdate);
+  rpc Ping(PingRequest) returns (PongResponse);
+  rpc GetLatestBlockhash(GetLatestBlockhashRequest) returns (GetLatestBlockhashResponse);
+  rpc GetBlockHeight(GetBlockHeightRequest) returns (GetBlockHeightResponse);
+  rpc GetSlot(GetSlotRequest) returns (GetSlotResponse);
+  rpc GetVersion(GetVersionRequest) returns (GetVersionResponse);
+  rpc IsBlockhashValid(IsBlockhashValidRequest) returns (IsBlockhashValidResponse);
+}
+
+message SubscribeRequest {
+  map<string, SubscribeRequestFilterSlots> slots = 1;
+  map<string, SubscribeRequestFilterAccounts> accounts = 2;
+  map<string, SubscribeRequestFilterTransactions> transactions = 3;
+  map<string, SubscribeRequestFilterTransactionStatus> transactions_status = 4;
+  map<string, SubscribeRequestFilterBlocks> blocks = 5;
+  map<string, SubscribeRequestFilterBlocksMeta> blocks_meta = 6;
+  map<string, SubscribeRequestFilterEntry> entry = 7;
+  repeated SubscribeRequestAccountsDataSlice accounts_data_slice = 8;
+  optional SubscribeRequestPing ping = 9;
+}
+
+message SubscribeRequestFilterSlots {
+  repeated string filter_by_commitment = 1;
+}
+
+message SubscribeRequestFilterAccounts {
+  repeated string account = 1;
+  repeated string owner = 2;
+  repeated string filters = 3;
+}
+
+message SubscribeRequestFilterTransactions {
+  repeated string account_include = 1;
+  repeated string account_exclude = 2;
+  repeated string account_required = 3;
+}
+
+message SubscribeRequestFilterTransactionStatus {
+  repeated string signature = 1;
+}
+
+message SubscribeRequestFilterBlocks {
+  repeated string account_include = 1;
+  bool include_transactions = 2;
+  bool include_accounts = 3;
+  bool include_entries = 4;
+}
+
+message SubscribeRequestFilterBlocksMeta {
+}
+
+message SubscribeRequestFilterEntry {
+}
+
+message SubscribeRequestAccountsDataSlice {
+  uint64 offset = 1;
+  uint64 length = 2;
+}
+
+message SubscribeRequestPing {
+  int32 id = 1;
+}
+
+message SubscribeUpdate {
+  repeated string filters = 1;
+  oneof update_oneof {
+    SubscribeUpdateAccount account = 2;
+    SubscribeUpdateSlot slot = 3;
+    SubscribeUpdateTransaction transaction = 4;
+    SubscribeUpdateTransactionStatus transaction_status = 5;
+    SubscribeUpdateBlock block = 6;
+    SubscribeUpdatePing ping = 7;
+    SubscribeUpdatePong pong = 8;
+    SubscribeUpdateBlockMeta block_meta = 9;
+    SubscribeUpdateEntry entry = 10;
+  }
+}
+
+message SubscribeUpdateSlot {
+  uint64 slot = 1;
+  optional uint64 parent = 2;
+  CommitmentLevel status = 3;
+  int64 dead_error = 4;
+}
+
+message SubscribeUpdateAccount {
+  bytes account = 1;
+  bytes pubkey = 2;
+  uint64 slot = 3;
+  bool is_startup = 4;
+}
+
+message SubscribeUpdateTransaction {
+  bytes transaction = 1;
+  uint64 slot = 2;
+  bytes signature = 3;
+  bool is_vote = 4;
+  uint64 index = 5;
+}
+
+message SubscribeUpdateTransactionStatus {
+  bytes signature = 1;
+  uint64 slot = 2;
+  uint64 index = 3;
+  optional uint64 err = 4;
+}
+
+message SubscribeUpdateBlock {
+  bytes parent_slot = 1;
+  uint64 slot = 2;
+  optional bytes parent_blockhash = 3;
+  bytes blockhash = 4;
+  repeated SubscribeUpdateBlockReward rewards = 5;
+  optional SubscribeUpdateBlockTime block_time = 6;
+  optional uint64 block_height = 7;
+  repeated SubscribeUpdateTransaction transactions = 8;
+}
+
+message SubscribeUpdateBlockReward {
+  string pubkey = 1;
+  int64 lamports = 2;
+  uint64 post_balance = 3;
+  optional RewardType reward_type = 4;
+  optional string commission = 5;
+}
+
+message SubscribeUpdateBlockTime {
+  int64 timestamp = 1;
+}
+
+message SubscribeUpdateBlockMeta {
+  uint64 slot = 1;
+  bytes blockhash = 2;
+  repeated SubscribeUpdateBlockReward rewards = 3;
+  optional SubscribeUpdateBlockTime block_time = 4;
+  optional uint64 block_height = 5;
+  uint64 executed_transaction_count = 6;
+  uint64 entries_count = 7;
+}
+
+message SubscribeUpdateEntry {
+  uint64 slot = 1;
+  uint64 index = 2;
+  uint64 num_hashes = 3;
+  bytes hash = 4;
+  uint64 executed_transaction_count = 5;
+  int64 starting_transaction_index = 6;
+}
+
+message SubscribeUpdatePing {
+  int32 id = 1;
+}
+
+message SubscribeUpdatePong {
+  int32 id = 1;
+}
+
+message PingRequest {
+  int32 count = 1;
+}
+
+message PongResponse {
+  int32 count = 1;
+}
+
+message GetLatestBlockhashRequest {
+  optional CommitmentLevel commitment = 1;
+}
+
+message GetLatestBlockhashResponse {
+  uint64 slot = 1;
+  string blockhash = 2;
+  uint64 last_valid_block_height = 3;
+}
+
+message GetBlockHeightRequest {
+  optional CommitmentLevel commitment = 1;
+}
+
+message GetBlockHeightResponse {
+  uint64 block_height = 1;
+}
+
+message GetSlotRequest {
+  optional CommitmentLevel commitment = 1;
+}
+
+message GetSlotResponse {
+  uint64 slot = 1;
+}
+
+message GetVersionRequest {
+}
+
+message GetVersionResponse {
+  string version = 1;
+}
+
+message IsBlockhashValidRequest {
+  string blockhash = 1;
+  optional CommitmentLevel commitment = 2;
+}
+
+message IsBlockhashValidResponse {
+  uint64 slot = 1;
+  bool valid = 2;
+}
+
+enum CommitmentLevel {
+  PROCESSED = 0;
+  CONFIRMED = 1;
+  FINALIZED = 2;
+}
+
+enum RewardType {
+  UNSPECIFIED = 0;
+  FEE = 1;
+  RENT = 2;
+  STAKING = 3;
+  VOTING = 4;
+}

@@ -1,0 +1,20 @@
+[package]
+name = "solana_toolkit"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+solana-sdk = "1.18.9"
+solana-client = "1.18.10"
+solana-program = "1.18.10"
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.9"
+futures = "0.3"
+
+[workspace]
+members = [
+  "balance",
+  "cli",
+  "geyser",
+]

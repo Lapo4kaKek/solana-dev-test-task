@@ -1,0 +1,32 @@
+# config.yaml
+rpc_url: "https://api.devnet.solana.com"
+geyser_endpoint: "https://grpc.ny.shyft.to:443" # "https://yellowstone.mango.markets" "https://grpc.ny.shyft.to"
+api_key: "b2b972c6-fff2-4b5c-aac9-375c6984b80e"
+
+
+retry:
+  max_attempts: 3
+  delay_ms: 500
+
+geyser:
+  endpoint: "https://grpc.ny.shyft.to"
+  api_key: "b2b972c6-fff2-4b5c-aac9-375c6984b80e"
+
+transfer:
+  source_keypair: "../keypairs/devnet.json"
+  destination: "6by5wexuVYMszkrTTPo5EwXaph4q5nyhrZsBGyFe7NRC"
+  amount_sol: 0.001
+  
+wallets:
+  sources:
+    - keypair: "../keypairs/devnet.json"
+    - keypair: "../keypairs/devnet2.json"
+  destinations:
+    - address: "6by5wexuVYMszkrTTPo5EwXaph4q5nyhrZsBGyFe7NRC"
+    - address: "DCum5iPWy92J1QtEbQNKDGwW5Led6M3uSh3eQDpR3vos"
+    - address: "CLh43TF7CuLafucV6biKvYeEpmtKYkbSVN5p8UssKEiT"
+    - address: "6fV7rNAJhNhr4f4QYZz1SAyj2vsxW6GTVRA8X9J8MkpY"
+
+polling_interval_ms: 800
+max_retries: 3
+retry_delay_ms: 500
